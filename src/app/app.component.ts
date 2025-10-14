@@ -11,7 +11,6 @@ import { RouterOutlet } from '@angular/router';
       <router-outlet></router-outlet>
     </div>
   `,
-  styles: '',
 })
 export class AppComponent {
   title = 'currency-converter';
