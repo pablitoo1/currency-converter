@@ -20,6 +20,8 @@ import { FormsModule } from '@angular/forms';
           Currency Converter
         </h2>
 
+        <img src="icon.png" alt="Icon" class="size-16 mb-6 grayscale" />
+
         <div class="flex flex-col gap-4 text-lg font-mono w-72">
           <input
             (input)="onAmountInput($event)"
@@ -111,7 +113,7 @@ import { FormsModule } from '@angular/forms';
 
         <button
           (click)="convert()"
-          class="mt-8 bg-gray-100 text-purple-800 px-4 py-2 rounded-lg font-mono font-bold hover:bg-purple-100 ease-in-out duration-200 transition-all hover:cursor-pointer"
+          class="mt-8 bg-gray-100 text-purple-800 px-4 py-2 rounded-lg font-mono font-bold border-2 border-purple-800 hover:bg-purple-800 hover:text-white hover:border-white ease-in-out duration-500 transition-all hover:cursor-pointer"
         >
           CONVERT
         </button>
@@ -123,7 +125,7 @@ import { FormsModule } from '@angular/forms';
             <span class="text-base font-medium italic"
               >exchange rate is from {{ date }}</span
             >
-            } @else { &nbsp; }
+            } @else { &nbsp;<br>&nbsp; }
           </p>
         </div>
       </div>
