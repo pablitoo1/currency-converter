@@ -9,23 +9,37 @@ import { FormsModule } from '@angular/forms';
 @Component({
   selector: 'app-converter',
   imports: [FormsModule],
-  template: `<div class="converter">
-    <h2 class="text-3xl">Currency converter</h2>
+  template: `<div
+    class="h-[100vh] w-full bg-gradient-to-br bg-purple-500 p-8 flex flex-col items-center justify-center"
+  >
+    <h2 class="text-6xl font-mono font-bold mb-8 text-gray-100">
+      Currency converter
+    </h2>
 
-    <input [(ngModel)]="amount" placeholder="Kwota" />
-    <select [(ngModel)]="from">
-      <option>EUR</option>
-      <option>USD</option>
-      <option>PLN</option>
-    </select>
-    <select [(ngModel)]="to">
-      <option>USD</option>
-      <option>EUR</option>
-      <option>PLN</option>
-    </select>
-    <button (click)="convert()">Przelicz</button>
+    <div class="flex flex-col gap-2 text-lg font-mono w-1/6">
+      <input [(ngModel)]="amount" placeholder="Kwota" />
+      <select [(ngModel)]="from">
+        <option>EUR</option>
+        <option>USD</option>
+        <option>PLN</option>
+      </select>
+      <select [(ngModel)]="to">
+        <option>USD</option>
+        <option>EUR</option>
+        <option>PLN</option>
+      </select>
+    </div>
 
-    <p>{{ result }}</p>
+    <button
+      (click)="convert()"
+      class="mt-8 bg-gray-100 text-purple-800 px-4 py-2 rounded-lg font-mono font-bold hover:bg-purple-100 ease-in-out duration-200 transition-all hover:cursor-pointer"
+    >
+      Przelicz
+    </button>
+
+    <div>
+      <p>{{ result }}</p>
+    </div>
   </div>`,
   styles: ``,
 })
