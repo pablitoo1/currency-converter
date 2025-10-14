@@ -8,4 +8,5 @@ export const routes: Routes = [
     title: 'Currency Converter',
   },
   { path: '', redirectTo: 'converter', pathMatch: 'full' },
+  { path: '**', redirectTo: 'converter', pathMatch: 'full' },
 ];
