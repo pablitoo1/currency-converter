@@ -5,6 +5,13 @@ import { fold as foldOption, fromNullable } from 'fp-ts/Option';
 import { fold as foldTask } from 'fp-ts/TaskEither';
 import { CurrencyService } from '../../services/currency.service';
 import { FormsModule } from '@angular/forms';
+import {
+  filterCurrencies,
+  formatConversion,
+  sanitizeAmount,
+  validateDifferentCurrencies,
+} from '../../utils/currency';
+import { Result } from '../../utils/result';
 
 @Component({
   selector: 'app-converter',
@@ -40,33 +47,34 @@ import { FormsModule } from '@angular/forms';
               (keydown.escape)="showFromDropdown = false; fromSearch = ''"
               class="w-full cursor-pointer tracking-widest border border-purple-300 bg-purple-700 text-white focus:outline-none rounded-lg px-2 py-1 text-left"
             >
-              {{ from }}
+              From: {{ from }}
             </button>
 
             @if (showFromDropdown) {
-            <div
-              class="absolute z-10 bg-white border border-purple-300 rounded-lg w-full max-h-48 overflow-y-auto mt-1 shadow-lg"
-            >
-              <input
-                [(ngModel)]="fromSearch"
-                (keydown.escape)="showFromDropdown = false; fromSearch = ''"
-                placeholder="Search..."
-                maxlength="3"
-                class="w-full tracking-widest uppercase px-2 py-1 border-b border-purple-200 bg-purple-700 text-white italic outline-none"
-              />
-              @for (c of filteredFrom(); track c) {
               <div
-                (click)="selectFrom(c)"
-                class="px-2 py-1 tracking-widest bg-purple-700 hover:bg-purple-600 cursor-pointer text-white"
+                class="absolute z-10 bg-white border border-purple-300 rounded-lg w-full max-h-48 overflow-y-auto mt-1 shadow-lg"
               >
-                {{ c }}
+                <input
+                  [(ngModel)]="fromSearch"
+                  (keydown.escape)="showFromDropdown = false; fromSearch = ''"
+                  placeholder="Search..."
+                  maxlength="3"
+                  class="w-full tracking-widest uppercase px-2 py-1 border-b border-purple-200 bg-purple-700 text-white italic outline-none"
+                />
+                @for (c of filteredFrom(); track c) {
+                  <div
+                    (click)="selectFrom(c)"
+                    class="px-2 py-1 tracking-widest bg-purple-700 hover:bg-purple-600 cursor-pointer text-white"
+                  >
+                    {{ c }}
+                  </div>
+                } 
+                @if (filteredFrom().length === 0) {
+                  <div class="px-2 py-1 bg-purple-700 text-gray-300">
+                    No results
+                  </div>
+                }
               </div>
-              } @if (filteredFrom().length === 0) {
-              <div class="px-2 py-1 bg-purple-700 text-gray-300">
-                No results
-              </div>
-              }
-            </div>
             }
           </div>
 
@@ -80,33 +88,34 @@ import { FormsModule } from '@angular/forms';
               (keydown.escape)="showToDropdown = false; toSearch = ''"
               class="w-full cursor-pointer tracking-widest border border-purple-300 bg-purple-700 text-white focus:outline-none rounded-lg px-2 py-1 text-left"
             >
-              {{ to }}
+              To: &nbsp;&nbsp;{{ to }}
             </button>
 
             @if (showToDropdown) {
-            <div
-              class="absolute z-10 bg-white border border-purple-300 rounded-lg w-full max-h-48 overflow-y-auto mt-1 shadow-lg"
-            >
-              <input
-                [(ngModel)]="toSearch"
-                (keydown.escape)="showToDropdown = false; toSearch = ''"
-                placeholder="Search..."
-                maxlength="3"
-                class="w-full tracking-widest uppercase px-2 py-1 border-b border-purple-200 bg-purple-700 text-white italic outline-none"
-              />
-              @for (c of filteredTo(); track c) {
               <div
-                (click)="selectTo(c)"
-                class="px-2 py-1 tracking-widest bg-purple-700 hover:bg-purple-600 cursor-pointer text-white"
+                class="absolute z-10 bg-white border border-purple-300 rounded-lg w-full max-h-48 overflow-y-auto mt-1 shadow-lg"
               >
-                {{ c }}
+                <input
+                  [(ngModel)]="toSearch"
+                  (keydown.escape)="showToDropdown = false; toSearch = ''"
+                  placeholder="Search..."
+                  maxlength="3"
+                  class="w-full tracking-widest uppercase px-2 py-1 border-b border-purple-200 bg-purple-700 text-white italic outline-none"
+                />
+                @for (c of filteredTo(); track c) {
+                  <div
+                    (click)="selectTo(c)"
+                    class="px-2 py-1 tracking-widest bg-purple-700 hover:bg-purple-600 cursor-pointer text-white"
+                  >
+                    {{ c }}
+                  </div>
+                } 
+                @if (filteredTo().length === 0) {
+                  <div class="px-2 py-1 bg-purple-700 text-gray-300">
+                    No results
+                  </div>
+                }
               </div>
-              } @if (filteredTo().length === 0) {
-              <div class="px-2 py-1 bg-purple-700 text-gray-300">
-                No results
-              </div>
-              }
-            </div>
             }
           </div>
         </div>
@@ -120,25 +129,30 @@ import { FormsModule } from '@angular/forms';
 
         <div>
           <p class="text-gray-100 text-xl mt-4 font-mono font-bold text-center">
-            @if (result) {
-            {{ result }}<hr>
-            <span class="text-base font-medium italic"
-              >exchange rate is from {{ date }}</span
-            >
-            } @else { &nbsp;<br>&nbsp; }
+            @if (result.converted) {
+              {{ result.converted }}
+              @if (result.date) {
+                <hr>
+                <span class="text-base font-medium italic"
+                  >{{result.date}}</span
+                >
+              } @else {
+                <br />&nbsp;
+              }
+            } @else { 
+              &nbsp;<br />&nbsp;
+            }
           </p>
         </div>
       </div>
     </div>
   `,
-  styles: ``,
 })
 export class ConverterComponent implements OnInit {
   from = 'EUR';
   to = 'USD';
   amount = '';
-  result: string = '';
-  date: string = '';
+  result: Result = { converted: '', date: '' };
   currencies: string[] = [];
 
   showFromDropdown = false;
@@ -153,7 +167,10 @@ export class ConverterComponent implements OnInit {
       this.currencyService.getCurrencies(),
       foldTask(
         (err) => async () => {
-          this.result = 'Błąd ładowania walut: ' + err.message;
+          this.result = {
+            converted: 'Błąd ładowania walut: ' + err.message,
+            date: '',
+          } as Result;
           this.currencies = ['EUR', 'USD', 'PLN'];
         },
         (currs) => async () => {
@@ -166,15 +183,10 @@ export class ConverterComponent implements OnInit {
   }
 
   filteredFrom() {
-    return this.currencies.filter((c) =>
-      c.toLowerCase().includes(this.fromSearch.toLowerCase())
-    );
+    return filterCurrencies(this.currencies, this.fromSearch);
   }
-
   filteredTo() {
-    return this.currencies.filter((c) =>
-      c.toLowerCase().includes(this.toSearch.toLowerCase())
-    );
+    return filterCurrencies(this.currencies, this.toSearch);
   }
 
   selectFrom(curr: string) {
@@ -189,51 +201,60 @@ export class ConverterComponent implements OnInit {
 
   onAmountInput(event: Event) {
     const input = event.target as HTMLInputElement;
-
-    let value = input.value.replace(/[^0-9.]/g, '');
-
-    if (value.includes('.')) {
-      const [intPart, decPart] = value.split('.');
-      value = intPart + '.' + decPart.slice(0, 2);
-    }
-
+    const value = sanitizeAmount(input.value);
     input.value = value;
     this.amount = value;
   }
 
   convert() {
     const maybeAmount = fromNullable(this.amount);
+
     this.result = foldOption(
-      () => 'Enter the amount!',
+      () => ({ converted: 'Enter the amount!', date: '' }),
       (val) => {
         const parsed = this.currencyService.parseAmount(val as string);
 
         return pipe(
           parsed,
           foldEither(
-            (err) => err,
-            (amountNum) => {
-              const task = this.currencyService.getRate(this.from, this.to);
-              this.currencyService.logIO(
-                `Downloading the ${this.from}→${this.to} rate...`
-              )();
-
+            (err) => ({ converted: err, date: '' }),
+            (amountNum) =>
               pipe(
-                task,
-                foldTask(
-                  (err) => async () => `Error: ${err.message}`,
-                  ({ rate, date }) =>
-                    async () => {
-                      this.date = date;
-                      return `${amountNum} ${this.from} = ${(
-                        rate * amountNum
-                      ).toFixed(2)} ${this.to}`;
-                    }
-                )
-              )().then((res) => (this.result = res));
+                validateDifferentCurrencies(this.from, this.to),
+                foldEither(
+                  (msg) => ({ converted: msg, date: '' }),
+                  () => {
+                    const task = this.currencyService.getRate(
+                      this.from,
+                      this.to
+                    );
+                    this.currencyService.logIO(
+                      `Downloading the ${this.from}→${this.to} rate...`
+                    )();
 
-              return 'Converting...';
-            }
+                    pipe(
+                      task,
+                      foldTask(
+                        (err) => async () => ({
+                          converted: `Error: ${err.message}`,
+                          date: '',
+                        }),
+                        ({ rate, date }) =>
+                          async () =>
+                            formatConversion(
+                              amountNum,
+                              this.from,
+                              this.to,
+                              rate,
+                              date
+                            )
+                      )
+                    )().then((res) => (this.result = res));
+
+                    return { converted: 'Converting...', date: '' };
+                  }
+                )
+              )
           )
         );
       }
