@@ -1,0 +1,15 @@
+<p class="text-gray-100 text-xl mt-4 font-mono font-bold text-center">
+    @if (result.converted) {
+        {{ result.converted }}
+        @if (result.date) {
+            <hr>
+            <span class="text-base font-medium italic"
+                >{{result.date}}</span
+            >
+        } @else {
+            <br />&nbsp;
+        }
+    } @else { 
+        &nbsp;<br />&nbsp;
+    }
+</p>

@@ -1,0 +1,38 @@
+<div
+  class="h-[100vh] w-full bg-gradient-to-br from-purple-600 to-purple-800 p-8 flex flex-col items-center justify-center"
+>
+  <div
+    class="flex flex-col items-center justify-center bg-gradient-to-br from-purple-700 to-purple-800 border-purple-900 border-2 py-16 px-32 rounded-2xl"
+  >
+    <h2 class="text-5xl font-mono font-bold mb-8 text-gray-100">
+      Currency Converter
+    </h2>
+
+    <img src="icon.png" alt="Icon" class="size-16 mb-6 grayscale" />
+
+    <div class="flex flex-col gap-4 text-lg font-mono w-72">
+      <app-amount-input [(value)]="amount" />
+      <app-currency-dropdown
+        label="From"
+        [selected]="from"
+        [currencies]="currencies"
+        (selectedChange)="from = $event"
+      />
+      <app-currency-dropdown
+        label="To"
+        [selected]="to"
+        [currencies]="currencies"
+        (selectedChange)="to = $event"
+      />
+    </div>
+
+    <button
+      (click)="convert()"
+      class="mt-8 bg-gray-100 text-purple-800 px-4 py-2 rounded-lg font-mono font-bold border-2 border-purple-800 hover:bg-purple-800 hover:text-white hover:border-white ease-in-out duration-500 transition-all hover:cursor-pointer"
+    >
+      CONVERT
+    </button>
+
+    <app-result [result]="result" />
+  </div>
+</div>

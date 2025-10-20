@@ -1,0 +1,34 @@
+<div class="relative w-full">
+  <button
+    (click)="toggleDropdown()"
+    (keydown.escape)="closeDropdown()"
+    class="w-full cursor-pointer tracking-widest border border-purple-300 bg-purple-700 text-white focus:outline-none rounded-lg px-2 py-1 text-left"
+  >
+    {{ label }}: {{ selected }}
+  </button>
+
+  @if (showDropdown) {
+  <div
+    class="absolute z-10 bg-white border border-purple-300 rounded-lg w-full max-h-48 overflow-y-auto mt-1 shadow-lg"
+  >
+    <input
+      [(ngModel)]="search"
+      (keydown.escape)="closeDropdown()"
+      placeholder="Search..."
+      maxlength="3"
+      class="w-full tracking-widest uppercase px-2 py-1 border-b border-purple-200 bg-purple-700 text-white italic outline-none"
+    />
+
+    @for (c of filteredCurrencies(); track c) {
+    <div
+      (click)="select(c)"
+      class="px-2 py-1 tracking-widest bg-purple-700 hover:bg-purple-600 cursor-pointer text-white"
+    >
+      {{ c }}
+    </div>
+    } @if (filteredCurrencies().length === 0) {
+    <div class="px-2 py-1 bg-purple-700 text-gray-300">No results</div>
+    }
+  </div>
+  }
+</div>
