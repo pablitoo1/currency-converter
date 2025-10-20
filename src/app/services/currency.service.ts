@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { tryCatch, TaskEither } from 'fp-ts/TaskEither';
-import { right, left, Either } from 'fp-ts/Either';
 import { IO } from 'fp-ts/IO';
 import { firstValueFrom } from 'rxjs';
 

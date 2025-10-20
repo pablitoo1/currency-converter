@@ -20,10 +20,7 @@ export class ConverterComponent implements OnInit {
   result: Result = { converted: '', date: '' };
   currencies: string[] = [];
 
-  constructor(
-    private currencyService: CurrencyService,
-    private convertFacadeService: ConvertFacadeService
-  ) {}
+  constructor(private convertFacadeService: ConvertFacadeService) {}
 
   ngOnInit() {
     this.convertFacadeService
