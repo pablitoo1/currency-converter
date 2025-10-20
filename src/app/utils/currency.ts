@@ -33,3 +33,8 @@ export const validateDifferentCurrencies = (
   from === to
     ? left(`Amount unchanged: same currency ${from}`)
     : right(undefined);
+
+export const parseAmount = (input: string): Either<string, number> => {
+  const num = Number(input);
+  return isNaN(num) || num <= 0 ? left('Incorrect amount') : right(num);
+};

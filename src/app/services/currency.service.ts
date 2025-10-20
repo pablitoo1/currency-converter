@@ -11,11 +11,6 @@ export class CurrencyService {
 
   constructor(private http: HttpClient) {}
 
-  parseAmount(input: string): Either<string, number> {
-    const num = Number(input);
-    return isNaN(num) || num <= 0 ? left('Incorrect amount') : right(num);
-  }
-
   getRate(
     from: string,
     to: string
